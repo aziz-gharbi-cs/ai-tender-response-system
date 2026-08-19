@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_DB: ao_response
       POSTGRES_USER: ao_user
-      POSTGRES_PASSWORD: ao_password
+      POSTGRES_PASSWORD: aziz1234
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
