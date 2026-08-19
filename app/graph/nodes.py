@@ -1,41 +1,34 @@
+from app.agents.extraction import ExtractionAgent
+from app.agents.generation import GenerationAgent
+from app.agents.quality import QualityAgent
+from app.agents.research import ResearchAgent
+from app.agents.verifier import VerifierAgent
 from app.graph.state import ProposalState
 
 
 async def verifier_node(state: ProposalState) -> ProposalState:
-    """
-    Validate the tender package before processing.
-    """
-    state["status"] = "verified"
-    return state
+    agent = VerifierAgent()
+    return await agent.run(state)
 
 
 async def extraction_node(state: ProposalState) -> ProposalState:
-    """
-    Extract structured requirements from the tender documents.
-    """
-    state["status"] = "extracted"
-    return state
+    agent = ExtractionAgent()
+    return await agent.run(state)
 
 
 async def research_node(state: ProposalState) -> ProposalState:
-    """
-    Perform external market and competitor research.
-    """
-    state["status"] = "researched"
-    return state
+    raise NotImplementedError(
+        "Research node requires a ResearchProvider dependency."
+    )
 
 
 async def generation_node(state: ProposalState) -> ProposalState:
-    """
-    Generate the technical proposal using internal and external context.
-    """
-    state["status"] = "generated"
-    return state
+    raise NotImplementedError(
+        "Generation node requires LLMProvider and Retriever dependencies."
+    )
 
 
 async def quality_node(state: ProposalState) -> ProposalState:
-    """
-    Validate quality, consistency, security, and compliance.
-    """
-    state["status"] = "validated"
-    return state
+    raise NotImplementedError(
+        "Quality node requires a SecurityScanner dependency."
+    )
