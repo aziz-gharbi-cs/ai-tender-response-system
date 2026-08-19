@@ -9,15 +9,22 @@ class VectorStore(ABC):
         self,
         documents: list[dict[str, Any]],
     ) -> None:
-        """Store documents/chunks in the vector database."""
+        """
+        Store vectorized document chunks.
+
+        Each document should contain:
+        - id
+        - vector
+        - payload
+        """
         raise NotImplementedError
 
     @abstractmethod
     async def similarity_search(
         self,
-        query: str,
+        query_vector: list[float],
         *,
         top_k: int = 5,
     ) -> list[dict[str, Any]]:
-        """Return the most relevant documents for a query."""
+        """Return the most relevant documents for a query vector."""
         raise NotImplementedError
