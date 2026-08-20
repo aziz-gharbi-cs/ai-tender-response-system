@@ -155,7 +155,7 @@ The first implementation can be minimal, but the **boundaries and interfaces mus
                                  │
                                  ▼
              ┌────────────────────────────────────────┐
-             │             INFRASTRUCTURE              │
+             │             INFRASTRUCTURE             │
              │                                        │
              │ PostgreSQL                             │
              │ Qdrant                                 │
@@ -165,7 +165,7 @@ The first implementation can be minimal, but the **boundaries and interfaces mus
              │ LLM Guard                              │
              │ LLM Provider                           │
              │ PDF/DOCX/OCR                           │
-             │ File Storage                            │
+             │ File Storage                           │
              └────────────────────────────────────────┘
 ```
 
