@@ -1,6 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
+import camelot
 import pdfplumber
 
 from app.domain.interfaces.document_parser import DocumentParser
@@ -42,6 +43,8 @@ class PDFParser(DocumentParser):
                     )
                 )
 
+        self._extract_tables(path, pages)
+
         return NormalizedDocument(
             document_id=str(uuid4()),
             filename=path.name,
@@ -52,3 +55,49 @@ class PDFParser(DocumentParser):
                 "source_path": str(path),
             },
         )
+
+    @staticmethod
+    def _extract_tables(
+        path: Path,
+        pages: list[DocumentPage],
+    ) -> None:
+        try:
+            tables = camelot.read_pdf(
+                str(path),
+                pages="all",
+                flavor="stream",
+            )
+        except Exception:
+            return
+
+        for table in tables:
+            page_number = int(table.page)
+
+            if page_number < 1 or page_number > len(pages):
+                continue
+
+            rows = [
+                [
+                    cell.strip()
+                    for cell in row
+                ]
+                for row in table.data
+            ]
+
+            rows = [
+                row
+                for row in rows
+                if any(cell for cell in row)
+            ]
+
+            if not rows:
+                continue
+
+            pages[page_number - 1].metadata.setdefault(
+                "tables",
+                [],
+            ).append(
+                {
+                    "rows": rows,
+                }
+            )
