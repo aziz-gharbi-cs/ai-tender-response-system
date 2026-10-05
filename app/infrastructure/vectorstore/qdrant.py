@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import NAMESPACE_URL, uuid5
 
 from qdrant_client import QdrantClient, models
 
@@ -18,6 +19,10 @@ class QdrantVectorStore(VectorStore):
         )
 
         self.collection_name = settings.qdrant_collection
+
+    @staticmethod
+    def _point_id(document_id: str) -> str:
+        return str(uuid5(NAMESPACE_URL, document_id))
 
     def ensure_collection(
         self,
@@ -65,9 +70,12 @@ class QdrantVectorStore(VectorStore):
 
         points = [
             models.PointStruct(
-                id=document["id"],
+                id=self._point_id(str(document["id"])),
                 vector=document["vector"],
-                payload=document.get("payload", {}),
+                payload={
+                    **document.get("payload", {}),
+                    "chunk_id": document["id"],
+                },
             )
             for document in documents
         ]
