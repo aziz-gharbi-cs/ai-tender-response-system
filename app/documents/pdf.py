@@ -67,7 +67,7 @@ class PDFParser(DocumentParser):
                 pages="all",
                 flavor="stream",
             )
-        except Exception:
+        except Exception:  # noqa: BLE001
             return
 
         for table in tables:

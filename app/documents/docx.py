@@ -29,7 +29,7 @@ class DOCXParser(DocumentParser):
                 f"Expected a DOCX file, got: {path.suffix}"
             )
 
-        document = Document(path)
+        document = Document(str(path))
 
         paragraphs = [
             paragraph.text.strip()

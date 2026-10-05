@@ -2,7 +2,6 @@ from celery import Celery
 
 from app.core.config import settings
 
-
 broker_url = (
     f"redis://{settings.redis_host}:{settings.redis_port}/0"
 )

@@ -1,20 +1,18 @@
-import asyncio
+import pytest
 
 from app.documents.pdf import PDFParser
 
 
-async def main():
+@pytest.mark.asyncio
+async def test_table_parser():
     document = await PDFParser().parse("test_table.pdf")
 
-    print("filename:", document.filename)
-    print("pages:", len(document.pages))
-    print("text:")
-    print(document.full_text)
+    assert document.filename == "test_table.pdf"
+    assert len(document.pages) > 0
 
-    print("\ntables:")
+    tables = []
+
     for page in document.pages:
-        print(f"Page {page.page_number}:")
-        print(page.metadata.get("tables", []))
+        tables.extend(page.metadata.get("tables", []))
 
-
-asyncio.run(main())
+    assert len(tables) > 0

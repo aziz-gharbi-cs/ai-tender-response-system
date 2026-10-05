@@ -1,7 +1,4 @@
 from app.agents.extraction import ExtractionAgent
-from app.agents.generation import GenerationAgent
-from app.agents.quality import QualityAgent
-from app.agents.research import ResearchAgent
 from app.agents.verifier import VerifierAgent
 from app.graph.state import ProposalState
 
