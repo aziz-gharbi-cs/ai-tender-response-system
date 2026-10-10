@@ -20,11 +20,15 @@ class Settings(BaseSettings):
     qdrant_port: int = 6333
     qdrant_collection: str = "tender_documents"
 
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+    reranker_device: str = "cpu"
+
     redis_host: str = "localhost"
     redis_port: int = 6379
 
-    llm_provider: str = "openai"
-    llm_model: str = ""
+    llm_provider: str = "ollama"
+    llm_model: str = "qwen2.5:7b"
+    ollama_base_url: str = "http://localhost:11434"
 
     upload_dir: str = "documents"
     generated_dir: str = "generated"
