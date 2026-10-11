@@ -1,31 +1,25 @@
+from collections.abc import Callable
+
+from app.agents.base import BaseAgent
 from app.agents.extraction import ExtractionAgent
 from app.agents.verifier import VerifierAgent
 from app.graph.state import ProposalState
 
 
 async def verifier_node(state: ProposalState) -> ProposalState:
-    agent = VerifierAgent()
-    return await agent.run(state)
+    return await VerifierAgent().run(state)
 
 
 async def extraction_node(state: ProposalState) -> ProposalState:
-    agent = ExtractionAgent()
-    return await agent.run(state)
+    return await ExtractionAgent().run(state)
 
 
-async def research_node(state: ProposalState) -> ProposalState:
-    raise NotImplementedError(
-        "Research node requires a ResearchProvider dependency."
-    )
+def make_agent_node(
+    agent_factory: Callable[[], BaseAgent],
+) -> Callable:
+    """Create a LangGraph node backed by an injected agent."""
 
+    async def node(state: ProposalState) -> ProposalState:
+        return await agent_factory().run(state)
 
-async def generation_node(state: ProposalState) -> ProposalState:
-    raise NotImplementedError(
-        "Generation node requires LLMProvider and Retriever dependencies."
-    )
-
-
-async def quality_node(state: ProposalState) -> ProposalState:
-    raise NotImplementedError(
-        "Quality node requires a SecurityScanner dependency."
-    )
+    return node

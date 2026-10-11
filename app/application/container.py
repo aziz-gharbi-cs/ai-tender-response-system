@@ -5,6 +5,7 @@ from app.agents.quality import QualityAgent
 from app.agents.research import ResearchAgent
 from app.core.config import settings
 from app.llm.provider import OllamaLLMProvider
+from app.research.gpt_researcher import GPTResearcherProvider
 
 
 @dataclass
@@ -20,12 +21,15 @@ class ApplicationContainer:
     def with_rag(
         cls,
         *,
-        research_provider: object,
         security_scanner: object,
+        research_provider: object | None = None,
         llm_provider: object | None = None,
     ) -> "ApplicationContainer":
-        """Build the RAG pipeline and configure the LLM provider."""
+        """Build the RAG pipeline and configure its providers."""
         from app.application.rag_factory import create_retrieval_service
+
+        if research_provider is None:
+            research_provider = GPTResearcherProvider()
 
         if llm_provider is None:
             if settings.llm_provider.lower() != "ollama":
