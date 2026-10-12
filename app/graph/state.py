@@ -16,6 +16,7 @@ class ProposalState(TypedDict, total=False):
 
     # Document processing
     extracted_text: dict[str, str]
+    document_id: str
 
     # Tender analysis
     requirements: dict[str, Any]

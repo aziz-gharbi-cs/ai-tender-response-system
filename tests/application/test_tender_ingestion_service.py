@@ -78,3 +78,35 @@ async def test_ingest_file_rejects_empty_chunks(dependencies):
         await service.ingest_file("empty.pdf")
 
     ingestion_service.ingest.assert_not_awaited()
+
+
+
+@pytest.mark.asyncio
+async def test_ingest_document_returns_normalized_document():
+    from unittest.mock import AsyncMock, Mock
+
+    document_service = Mock()
+    document = Mock()
+    document.document_id = "doc-123"
+    document.filename = "tender.pdf"
+    document_service.parse_document = AsyncMock(return_value=document)
+
+    chunker = Mock()
+    chunks = [{"text": "Tender requirement"}]
+    chunker.chunk.return_value = chunks
+
+    ingestion_service = Mock()
+    ingestion_service.ingest = AsyncMock()
+
+    service = TenderIngestionService(
+        document_service=document_service,
+        chunker=chunker,
+        ingestion_service=ingestion_service,
+    )
+
+    result = await service.ingest_document("tender.pdf")
+
+    assert result is document
+    document_service.parse_document.assert_awaited_once_with("tender.pdf")
+    chunker.chunk.assert_called_once_with(document)
+    ingestion_service.ingest.assert_awaited_once_with(chunks)

@@ -40,6 +40,7 @@ class GenerationAgent(BaseAgent):
             documents = await self.retriever.retrieve(
                 retrieval_query,
                 top_k=self.top_k,
+                document_id=state.get("document_id"),
             )
 
             evidence: list[dict[str, Any]] = []
