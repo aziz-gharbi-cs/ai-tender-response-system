@@ -25,6 +25,7 @@ class VectorStore(ABC):
         query_vector: list[float],
         *,
         top_k: int = 5,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]]:
-        """Return the most relevant documents for a query vector."""
+        """Return relevant documents, optionally restricted to one document."""
         raise NotImplementedError

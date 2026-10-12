@@ -17,14 +17,17 @@ class FakeEmbeddingProvider:
 class FakeVectorStore:
     def __init__(self) -> None:
         self.requested_top_k: int | None = None
+        self.requested_document_id: str | None = None
 
     async def similarity_search(
         self,
         query_vector: list[float],
         *,
         top_k: int = 5,
+        document_id: str | None = None,
     ) -> list[dict]:
         self.requested_top_k = top_k
+        self.requested_document_id = document_id
         return [
             {"id": str(i), "payload": {"text": f"Chunk {i}"}}
             for i in range(top_k)
@@ -116,3 +119,28 @@ async def test_retrieval_rejects_empty_query() -> None:
 
     with pytest.raises(ValueError, match="Query cannot be empty"):
         await service.retrieve("   ")
+
+
+
+@pytest.mark.asyncio
+async def test_retrieval_passes_document_id_to_vector_store() -> None:
+    store = FakeVectorStore()
+    service = RetrievalService(FakeEmbeddingProvider(), store)
+
+    await service.retrieve(
+        "technical documentation",
+        top_k=3,
+        document_id="tender-A",
+    )
+
+    assert store.requested_document_id == "tender-A"
+
+
+@pytest.mark.asyncio
+async def test_retrieval_without_document_id_remains_unfiltered() -> None:
+    store = FakeVectorStore()
+    service = RetrievalService(FakeEmbeddingProvider(), store)
+
+    await service.retrieve("technical documentation", top_k=3)
+
+    assert store.requested_document_id is None

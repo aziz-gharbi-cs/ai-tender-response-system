@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from app.agents.generation import GenerationAgent
 from app.agents.quality import QualityAgent
 from app.agents.research import ResearchAgent
+from app.application.tender_ingestion_service import TenderIngestionService
 from app.core.config import settings
 from app.llm.provider import OllamaLLMProvider
 from app.research.gpt_researcher import GPTResearcherProvider
@@ -16,6 +17,7 @@ class ApplicationContainer:
     llm_provider: object
     retriever: object
     security_scanner: object
+    ingestion_service: TenderIngestionService | None = None
 
     @classmethod
     def with_rag(
@@ -26,7 +28,10 @@ class ApplicationContainer:
         llm_provider: object | None = None,
     ) -> "ApplicationContainer":
         """Build the RAG pipeline and configure its providers."""
-        from app.application.rag_factory import create_retrieval_service
+        from app.application.rag_factory import (
+            create_retrieval_service,
+            create_tender_ingestion_service,
+        )
 
         if research_provider is None:
             research_provider = GPTResearcherProvider()
@@ -47,6 +52,7 @@ class ApplicationContainer:
             llm_provider=llm_provider,
             retriever=create_retrieval_service(),
             security_scanner=security_scanner,
+            ingestion_service=create_tender_ingestion_service(),
         )
 
     def create_research_agent(self) -> ResearchAgent:
@@ -60,3 +66,10 @@ class ApplicationContainer:
 
     def create_quality_agent(self) -> QualityAgent:
         return QualityAgent(security_scanner=self.security_scanner)
+
+    def create_tender_ingestion_service(self) -> TenderIngestionService:
+        if self.ingestion_service is None:
+            raise RuntimeError(
+                "Tender ingestion is not configured in this container."
+            )
+        return self.ingestion_service

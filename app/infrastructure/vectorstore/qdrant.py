@@ -90,12 +90,25 @@ class QdrantVectorStore(VectorStore):
         query_vector: list[float],
         *,
         top_k: int = 5,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]]:
-        """Search Qdrant using a query embedding."""
+        """Search Qdrant, optionally restricting results to one document."""
+
+        query_filter = None
+        if document_id is not None:
+            query_filter = models.Filter(
+                must=[
+                    models.FieldCondition(
+                        key="document_id",
+                        match=models.MatchValue(value=document_id),
+                    )
+                ]
+            )
 
         results = self.client.query_points(
             collection_name=self.collection_name,
             query=query_vector,
+            query_filter=query_filter,
             limit=top_k,
             with_payload=True,
         ).points

@@ -43,3 +43,30 @@ def test_container_preserves_injected_provider(monkeypatch):
     )
 
     assert container.llm_provider is custom_provider
+
+
+def test_container_exposes_tender_ingestion_service(monkeypatch):
+    from app.application.tender_ingestion_service import TenderIngestionService
+
+    fake_ingestion_service = object()
+
+    monkeypatch.setattr(
+        "app.application.rag_factory.create_retrieval_service",
+        lambda: "fake-retriever",
+    )
+    monkeypatch.setattr(
+        "app.application.rag_factory.create_tender_ingestion_service",
+        lambda: fake_ingestion_service,
+    )
+    monkeypatch.setattr(
+        "app.application.container.settings.llm_provider",
+        "ollama",
+    )
+
+    container = ApplicationContainer.with_rag(
+        research_provider=object(),
+        llm_provider=object(),
+        security_scanner=object(),
+    )
+
+    assert container.create_tender_ingestion_service() is fake_ingestion_service

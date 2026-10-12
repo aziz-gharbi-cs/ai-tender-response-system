@@ -22,6 +22,7 @@ class RetrievalService:
         *,
         top_k: int = 5,
         candidate_k: int | None = None,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]]:
         if not query.strip():
             raise ValueError("Query cannot be empty.")
@@ -40,6 +41,7 @@ class RetrievalService:
         documents = await self.vector_store.similarity_search(
             query_vector,
             top_k=candidate_k if self.reranker else top_k,
+            document_id=document_id,
         )
 
         if self.reranker is not None:
