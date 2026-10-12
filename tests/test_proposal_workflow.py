@@ -66,7 +66,7 @@ async def test_workflow_runs_all_nodes_in_order():
 
     research.research.assert_awaited_once()
     retriever.retrieve.assert_awaited_once()
-    llm.generate.assert_awaited_once()
+    assert llm.generate.await_count == 2
     scanner.scan_input.assert_awaited_once()
     scanner.scan_output.assert_awaited_once()
 
@@ -181,7 +181,7 @@ async def test_workflow_ingests_real_pdf_before_generating_proposal():
     )
 
     retriever.retrieve.assert_awaited_once()
-    llm.generate.assert_awaited_once()
+    assert llm.generate.await_count == 2
     assert result["proposal_draft"] == (
         "Technical proposal generated from the PDF."
     )

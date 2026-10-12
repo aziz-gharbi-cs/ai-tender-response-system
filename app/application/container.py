@@ -65,7 +65,10 @@ class ApplicationContainer:
         )
 
     def create_quality_agent(self) -> QualityAgent:
-        return QualityAgent(security_scanner=self.security_scanner)
+        return QualityAgent(
+            security_scanner=self.security_scanner,
+            llm_provider=self.llm_provider,
+        )
 
     def create_tender_ingestion_service(self) -> TenderIngestionService:
         if self.ingestion_service is None:
