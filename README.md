@@ -1700,19 +1700,3 @@ If adding a new tool requires rewriting unrelated layers, the architecture is pr
 
 ---
 
-# 34. Current Next Step
-
-Start with:
-
-```text
-1. Create project structure
-2. Configure environment
-3. Define domain interfaces
-4. Define ProposalState
-5. Create LangGraph workflow
-6. Create FastAPI application
-```
-
-Then implement the agents and infrastructure progressively.
-
-**The architecture comes first. The implementation grows inside it.**
